@@ -1,0 +1,36 @@
+Introduction
+------------
+
+Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on an HPC under its traditional resource manager. Currently, PBS or Torque on a linux cluster are supported.
+
+
+Requirements
+------------
+*Linux (should work with most distributions)
+*Apache Spark 1.3.0+
+
+Installation
+------------
+Download and unzip the package. Change directory to $SPARK_ON_HPC
+#cd $SPARK_ON_HPC
+
+Copy scripts into $SPARK_HOME/sbin
+#cp pbs/spark-sbin/* $SPARK_HOME/sbin
+
+Usage
+-----
+Root permission is not required.
+
+Once installed, create a job directory.
+#cd $HOME
+#mkdir test
+#cd test
+
+Copy an example job script inside the package. There are two examples in the package. One is for single node script. The other is for multiple node script. Make change to the script. Usually, the directives, shell variables and spark-submit arguments are changed.
+#cp $SPARK_ON_HPC/examples/test_spark_multi/spark_multi.sh test_spark_job.sh
+
+Submit a job
+#qsub test_spark_job.sh
+
+The directory conf, logs, and work will be created during the execution of spark. Examine them if necessary in addition to the normal job stdout and stderr files.
+
