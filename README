@@ -11,6 +11,8 @@ Requirements
 
 Installation
 ------------
+Download and unpack Spark package into $SPARK_HOME directory
+
 Download and unzip the package. Change directory to $SPARK_ON_HPC
 #cd $SPARK_ON_HPC
 
