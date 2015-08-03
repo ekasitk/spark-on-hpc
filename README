@@ -41,8 +41,7 @@ export SPARK_HOME=$HOME/spark-1.4.1-bin-1.2.1
 export SPARK_JOB_DIR=$PBS_O_WORKDIR
 
 Set the spark-submit arguments. For example, running JavaSparkPi 10 tasks
-#SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.examples.JavaSparkPi $SPARK_HOME/lib/spark-examples-1.4.1-hadoop1.2.1.jar 10 > $PBS_O_
-WORKDIR/pi.txt
+#SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.examples.JavaSparkPi $SPARK_HOME/lib/spark-examples-1.4.1-hadoop1.2.1.jar 10 > $PBS_O_WORKDIR/pi.txt
 
 
 Submit a job
