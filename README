@@ -41,8 +41,7 @@ export SPARK_HOME=$HOME/spark-1.4.1-bin-1.2.1
 export SPARK_JOB_DIR=$PBS_O_WORKDIR
 
 Set the spark-submit arguments. For example, running JavaSparkPi 10 tasks
-#SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.exampl
-es.JavaSparkPi $SPARK_HOME/lib/spark-examples-1.4.1-hadoop1.2.1.jar 10 > $PBS_O_
+#SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.examples.JavaSparkPi $SPARK_HOME/lib/spark-examples-1.4.1-hadoop1.2.1.jar 10 > $PBS_O_
 WORKDIR/pi.txt
 
 
@@ -53,5 +52,5 @@ The directory conf, logs, and work will be created in SPARK_JOB_DIR during the e
 
 How to run spark-on-hpc manually for testing purpose
 ----------------------------------------------------
-Set environment variables SPARK_JOB_DIR and SPARK_HOME.
+Set environment variables SPARK_JOB_DIR, SPARK_HOME, and PBS_NODEFILE.
 
