@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#PBS -l nodes=3:ppn=2,walltime=0:20:00
-#PBS -l pmem=2gb
-#PBS -N spark-wordcount
+#PBS -l nodes=5:ppn=2,walltime=0:20:00
+#PBS -l pmem=512mb
+#PBS -N spark-pi
 #PBS -q test
 
 # -l nodes must be greater than 1. Support only 1 node spec (no + sign).
@@ -30,7 +30,7 @@ WEBUI_URL=http://$SPARK_MASTER_IP:$SPARK_MASTER_WEBUI_PORT
 
 # Submit a spark job. 
 # The driver and executor memory is calculated from pmem*ppn
-$SPARK_HOME/bin/spark-submit --master $SPARK_URL --class JavaWordCount $PBS_O_WORKDIR/testjwc.jar file:///etc/services > $PBS_O_WORKDIR/wc.txt
+$SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.examples.JavaSparkPi $SPARK_HOME/lib/spark-examples-1.4.1-hadoop1.2.1.jar 10 > $PBS_O_WORKDIR/pi.txt
 
 # Stop the spark cluster
 $SPARK_HOME/sbin/spark-on-hpc.sh stop
