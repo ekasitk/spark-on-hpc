@@ -1,8 +1,13 @@
 Introduction
 ------------
 
-Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on an HPC under its traditional resource manager. Currently, PBS or Torque on a linux cluster are supported.
+Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on an HPC under its traditional resource manager. Currently, PBS or Torque on a linux cluster are supported. 
 
+Features
+--------
+*Run under PBS resource limit
+*Multiple spark jobs (master port is selected randomly for each job)
+*Only master and workers of the same job are allowed to connect together by a shared secret.
 
 Requirements
 ------------
