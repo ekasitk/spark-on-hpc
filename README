@@ -5,8 +5,8 @@ Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on 
 
 Features
 --------
-*Run under PBS resource limit
-*Multiple spark jobs (master port is selected randomly for each job)
+*Run under PBS resource limit, i.e. number of nodes, number of cores, memory and walltime
+*Multiple spark jobs (master port is selected randomly for each job) for any user
 *Only master and workers of the same job are allowed to connect together by a shared secret.
 
 Requirements
