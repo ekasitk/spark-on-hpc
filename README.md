@@ -12,12 +12,12 @@ Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on 
 * Apache Spark 1.3.0+
 
 # Installation
-1. Download and unpack Spark package into `SPARK_HOME` directory
-2. Download and unzip the Spark-on-HPC package. Change directory to `SPARK_ON_HPC` root directory
+* Download and unpack Spark package into `SPARK_HOME` directory
+* Download and unzip the Spark-on-HPC package. Change directory to `SPARK_ON_HPC` root directory
 ```
 #cd $SPARK_ON_HPC
 ```
-3. Copy scripts into `$SPARK_HOME/sbin`
+* Copy scripts into `$SPARK_HOME/sbin`
 ```
 #cp pbs/spark-sbin/* $SPARK_HOME/sbin
 ```
@@ -25,32 +25,32 @@ Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on 
 # Usage
 Root permission is NOT required.
 
-1. Once installed, create a job directory.
+* Once installed, create a job directory.
 ```
 #cd $HOME
 #mkdir test
 #cd test
 ```
-2. Copy an example job script inside the package. There are two examples in the package. One is for single node script. The other is for multiple node script.
+* Copy an example job script inside the package. There are two examples in the package. One is for single node script. The other is for multiple node script.
 ```
 #cp $SPARK_ON_HPC/examples/test_spark_multi/spark_multi.sh test_spark_job.sh
 ```
-3. Make change to the script. Usually, the directives, shell variables and spark-submit arguments are changed. Set directives. For a PBS example, request 5 nodes (1 master + 4 workers), each with 1gb memory allocated, and queue "test".
+* Make change to the script. Usually, the directives, shell variables and spark-submit arguments are changed. Set directives. For a PBS example, request 5 nodes (1 master + 4 workers), each with 1gb memory allocated, and queue "test".
 ```
 #PBS -l nodes=5
 #PBS -l pmem=1gb
 #PBS -q test
 ```
-4. In job script, set `SPARK_HOME` to where the spark package is installed, and `SPARK_JOB_DIR` to the directory where the configuration and log files will be created. Note that the `PBS_O_WORKDIR` is the location where qsub command is executed.
+* In job script, set `SPARK_HOME` to where the spark package is installed, and `SPARK_JOB_DIR` to the directory where the configuration and log files will be created. Note that the `PBS_O_WORKDIR` is the location where qsub command is executed.
 ```
 export SPARK_HOME=$HOME/spark-1.4.1-bin-1.2.1
 export SPARK_JOB_DIR=$PBS_O_WORKDIR
 ```
-5. In job script, change the spark-submit arguments. For example, running JavaSparkPi 10 tasks
+* In job script, change the spark-submit arguments. For example, running JavaSparkPi 10 tasks
 ```
 SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.examples.JavaSparkPi $SPARK_HOME/lib/spark-examples-1.4.1-hadoop1.2.1.jar 10 > $PBS_O_WORKDIR/pi.txt
 ```
-6. Submit a job
+* Submit a job
 ```
 #qsub test_spark_job.sh
 ```
