@@ -17,7 +17,6 @@ Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on 
 ```
 #cd $SPARK_ON_HPC
 ```
-
 3. Copy scripts into `$SPARK_HOME/sbin`
 ```
 #cp pbs/spark-sbin/* $SPARK_HOME/sbin
