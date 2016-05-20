@@ -35,10 +35,10 @@ Root permission is NOT required.
 ```
 #cp $SPARK_ON_HPC/examples/test_spark_multi/spark_multi.sh test_spark_job.sh
 ```
-* Make change to the script. Usually, the directives, shell variables and spark-submit arguments are changed. Set directives. For a PBS example, request 5 nodes (1 master + 4 workers), each with 1gb memory allocated, and queue "test".
+* Make change to the script. Usually, the directives, shell variables and spark-submit arguments are changed. Set directives. For a PBS example, request 5 nodes (1 master + 4 workers), each with 2 cores and 1gb memory allocated, and queue "test".
 ```
-#PBS -l nodes=5
-#PBS -l pmem=1gb
+#PBS -l nodes=5:ppn=2
+#PBS -l vmem=1gb
 #PBS -q test
 ```
 * In job script, set `SPARK_HOME` to where the spark package is installed, and `SPARK_JOB_DIR` to the directory where the configuration and log files will be created. Note that the `PBS_O_WORKDIR` is the location where qsub command is executed.

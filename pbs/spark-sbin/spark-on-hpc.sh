@@ -51,8 +51,10 @@ case "$1" in
       echo 
       ssh $SPARK_MASTER_IP ${SPARK_HOME}/sbin/spark-daemon-on-hpc.sh --config $SPARK_CONF_DIR start org.apache.spark.deploy.master.Master 1 --ip $SPARK_MASTER_IP --port $SPARK_MASTER_PORT --webui-port $SPARK_MASTER_WEBUI_PORT 2>&1 | sed "s/^/$SPARK_MASTER_IP: /"
 
+      SLAVE_NUM=1
       for slave in $SLAVES; do
-         ssh $slave ${SPARK_HOME}/sbin/spark-daemon-on-hpc.sh --config $SPARK_CONF_DIR start org.apache.spark.deploy.worker.Worker 1 spark://$SPARK_MASTER_IP:$SPARK_MASTER_PORT 2>&1 | sed "s/^/$slave: /" &
+         ssh $slave ${SPARK_HOME}/sbin/spark-daemon-on-hpc.sh --config $SPARK_CONF_DIR start org.apache.spark.deploy.worker.Worker $SLAVE_NUM spark://$SPARK_MASTER_IP:$SPARK_MASTER_PORT 2>&1 | sed "s/^/$slave: /" &
+         (( SLAVE_NUM++ ))   
       done
 
       wait
@@ -68,8 +70,10 @@ case "$1" in
       . $SPARK_ENV
       echo "Use spark config $SPARK_ENV"
 
+      SLAVE_NUM=1
       for slave in $SLAVES; do
-         ssh $slave ${SPARK_HOME}/sbin/spark-daemon-on-hpc.sh --config $SPARK_CONF_DIR stop org.apache.spark.deploy.worker.Worker 1 2>&1 | sed "s/^/$slave: /" &
+         ssh $slave ${SPARK_HOME}/sbin/spark-daemon-on-hpc.sh --config $SPARK_CONF_DIR stop org.apache.spark.deploy.worker.Worker $SLAVE_NUM 2>&1 | sed "s/^/$slave: /" &
+         (( SLAVE_NUM++ ))   
       done
 
       ssh $SPARK_MASTER_IP ${SPARK_HOME}/sbin/spark-daemon-on-hpc.sh --config $SPARK_CONF_DIR stop org.apache.spark.deploy.master.Master 1 2>&1 | sed "s/^/$SPARK_MASTER_IP: /" &
@@ -88,17 +92,16 @@ case "$1" in
          exit 1
       fi
 
-      [ -f "$PBS_NODEFILE" ] || { echo "No PBS_NODEFILE found" >&2 ; exit 1; }
-
-      nodes=($( cat "$PBS_NODEFILE" | sort | uniq ))
-      nnodes=${#nodes[@]}
-      last=$(( $nnodes - 1 ))
+      [ -f "$PBS_NODEFILE" ] || { echo "No PBS_NODEFILE found, should run under qsub" >&2 ; exit 1; }
 
       if [ -z "$PBS_NUM_PPN" ]; then
-         nlines=$(wc -l < $PBS_NODEFILE)
-         PBS_NUM_PPN=$(($nlines/$nnodes))
+         echo "PBS_NUM_PPN is not set!! Torque version may be too old. Set PBS_NUM_PPN manually to ppn" >&2
+         exit 1
       fi
 
+      nodes=($( cat "$PBS_NODEFILE" | awk -v N=$PBS_NUM_PPN '{if (++count%N==0) print $0}' | sort ))
+      nnodes=${#nodes[@]}
+      last=$(( $nnodes - 1 ))
 
       SPARK_WORKER_DIR=$SPARK_JOB_DIR/work
       SPARK_WORKER_CORES=${PBS_NUM_PPN:-1}
@@ -106,13 +109,21 @@ case "$1" in
       SPARK_PID_DIR=$SPARK_LOG_DIR
       SPARK_SLAVES=$SPARK_CONF_DIR/slaves
 
-      MAX_MEM=`ulimit -m`
+      MAX_MEM=`ulimit -v`
       if [ "$MAX_MEM" = "unlimited" ] || [ -z "$MAX_MEM" ]; then
-         echo "WARNING -l pmem not set, use spark memory 1gb by default" >&2
+         echo "WARNING -l vmem not set, use spark memory 1gb by default" >&2
          SPARK_WORKER_MEMORY="1g"
       else 
          SPARK_WORKER_MEMORY="$((($MAX_MEM+1024-1)/1024))m"
       fi
+
+      #
+      # If nodes > 1, -l mem is ignored.
+      # -l pmem override -l mem.
+      # If there is pmem, Torque finds a node with at least pmem*ppn memory.
+      # But ulimit = -l pmem, a worker can only see pmem memory.
+      # USE -l vmem seems to solve problems
+      #
       #if [ ! -z "$PBS_PMEM" ]; then
       #   PMEM=${PBS_PMEM%?}    # trim last character, assuming "b"
       #   PMEM_SIZE=${PMEM%?}   # get number
