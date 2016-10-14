@@ -1,9 +1,9 @@
 # Introduction
 
-Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on an HPC under its traditional resource manager. Currently, PBS or Torque on a linux cluster are supported. 
+Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on an HPC under its traditional resource manager. Currently, PBS, OAR or Torque on a linux cluster are supported. 
 
 # Features
-* Run under PBS resource limit, i.e. number of nodes, number of cores, memory and walltime
+* Run under PBS or OAR resource limit, i.e. number of nodes, number of cores, memory and walltime
 * Multiple spark jobs (master port is selected randomly for each job) for any user
 * Only master and workers of the same job are allowed to connect together by a shared secret.
 
@@ -21,6 +21,10 @@ Spark-on-HPC dynamically provisions Apache Spark clusters and run spark jobs on 
 ```
 #cp pbs/spark-sbin/* $SPARK_HOME/sbin
 ```
+or
+```
+#cp oar/spark-sbin/* $SPARK_HOME/sbin
+```
 
 # Usage
 Root permission is NOT required.
@@ -31,6 +35,7 @@ Root permission is NOT required.
 #mkdir test
 #cd test
 ```
+## PBS
 * Copy an example job script inside the package. There are two examples in the package. One is for single node script. The other is for multiple node script.
 ```
 #cp $SPARK_ON_HPC/examples/test_spark_multi/spark_multi.sh test_spark_job.sh
@@ -55,6 +60,20 @@ SPARK_HOME/bin/spark-submit --master $SPARK_URL --class org.apache.spark.example
 #qsub test_spark_job.sh
 ```
 The directory conf, logs, and work will be created in `SPARK_JOB_DIR` during the execution of spark. Examine them if necessary in addition to the normal job stdout and stderr files.
+
+## OAR
+
+```bash
+# create a job folder
+mkdir jobs
+# copy an example submission script
+cp spark-on-oar/oar/spark-multi.sh jobs/
+# Edit the $SPARK_HOME env variable in spark-multi.sh to point to your spark folder
+# then submit with oarsub, e.g.:
+oarsub -l nodes=2/cpu=1/core=1,walltime=0:20 -n sparkPi spark-multi.sh
+```
+By default spark-multi.sh submits a SparkPi job with parameter 10. You should replace this line with your own submissions.
+Spark will write all the logs in your jobs folder.
 
 # How to run spark-on-hpc manually for testing purpose
 Set environment variables `SPARK_JOB_DIR`, `SPARK_HOME`, and `PBS_NODEFILE`.
